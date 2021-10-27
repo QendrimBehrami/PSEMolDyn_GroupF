@@ -1,1 +1,4 @@
-MolSim2021-Group-F
+MolSim
+===
+
+The Molecular Dynamics teaching code.
