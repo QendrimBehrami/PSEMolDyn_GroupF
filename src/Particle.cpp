@@ -65,6 +65,19 @@ bool Particle::operator==(Particle &other) {
          (type == other.type) and (m == other.m) and (old_f == other.old_f);
 }
 
+void Particle::updateF(const std::array<double, 3> &newForce) {
+  this->old_f = this->f;
+  this->f = newForce;
+}
+
+void Particle::updateX(const std::array<double, 3> &newX) {
+    this->x = newX;
+}
+
+void Particle::updateV(const std::array<double, 3> &newV) {
+    this->v = newV;
+}
+
 std::ostream &operator<<(std::ostream &stream, Particle &p) {
   stream << p.toString();
   return stream;

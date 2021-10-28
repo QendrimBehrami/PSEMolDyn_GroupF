@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <list>
+#include <outputWriter/VTKWriter.h>
 
 /**** forward declaration of the calculation functions ****/
 
@@ -69,6 +70,9 @@ int main(int argc, char *argsv[]) {
   }
 
   std::cout << "output written. Terminating..." << std::endl;
+
+
+
   return 0;
 }
 
@@ -77,28 +81,40 @@ void calculateF() {
   iterator = particles.begin();
 
   for (auto &p1 : particles) {
+      std::array<double,3> F_i {0,0,0};
     for (auto &p2 : particles) {
-      // @TODO: insert calculation of force here!
+      if (p1.getX() != p2.getX() ){
+          double scalar = p1.getM()*p2.getM()/ std::pow(ArrayUtils::L2Norm(p1.getX()-p2.getX()),3);
+          std::array<double,3> F_ij = scalar * (p2.getX()-p1.getX());
+          F_i = F_i + F_ij;
+      }
     }
+    p1.updateF(F_i);
   }
 }
 
 void calculateX() {
   for (auto &p : particles) {
-    // @TODO: insert calculation of force here!
+    std::array<double,3> newX = p.getX() + delta_t*p.getV() + (delta_t*delta_t)/(2*p.getM()) * p.getOldF();
+    p.updateX(newX);
   }
 }
 
 void calculateV() {
   for (auto &p : particles) {
-    // @TODO: insert calculation of force here!
+    std::array<double,3> newV = p.getV() + (delta_t/(2*p.getM())) * (p.getF() + p.getOldF());
+    p.updateV(newV);
   }
 }
 
 void plotParticles(int iteration) {
 
-  std::string out_name("MD_vtk");
+    std::string out_name("MD_vtk");
+    outputWriter::VTKWriter vtkWriter;
+    vtkWriter.initializeOutput(particles.size());
+    for(auto &particle : particles){
+        vtkWriter.plotParticle(particle);
+    }
+    vtkWriter.writeFile(out_name,iteration);
 
-  outputWriter::XYZWriter writer;
-  writer.plotParticles(particles, out_name, iteration);
 }
