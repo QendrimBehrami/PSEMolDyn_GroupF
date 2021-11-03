@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <list>
+#include <outputWriter/VTKWriter.h>
 
 /**** forward declaration of the calculation functions ****/
 
@@ -38,6 +39,7 @@ std::list<Particle> particles;
 int main(int argc, char *argsv[]) {
 
   std::cout << "Hello from MolSim for PSE!" << std::endl;
+    char *filename = parseArguments(argc, argsv);
   if (argc != 2) {
     std::cout << "Erroneous programme call! " << std::endl;
     std::cout << "./molsym filename" << std::endl;
@@ -76,29 +78,52 @@ void calculateF() {
   std::list<Particle>::iterator iterator;
   iterator = particles.begin();
 
+  std::array<double,3> f_i={0,0,0};
   for (auto &p1 : particles) {
     for (auto &p2 : particles) {
       // @TODO: insert calculation of force here!
+        if(!(&p1==&p2)){
+            double scalar = (p1.getM()*p2.getM())/std::pow(ArrayUtils::L2Norm(p1.getX()-p2.getX()),3);
+            std::array<double,3> f_ij = scalar*(p1.getX()-p2.getX());
+            f_i = f_i+f_ij;
+        }
     }
+    p1.setF(f_i);
+
   }
+
+
 }
 
 void calculateX() {
   for (auto &p : particles) {
     // @TODO: insert calculation of force here!
+     p.setX(p.getX()+delta_t*p.getV()+((delta_t*delta_t)/2*p.getM())*p.getF());
   }
 }
 
 void calculateV() {
   for (auto &p : particles) {
     // @TODO: insert calculation of force here!
+    p.setV(p.getV()+(delta_t/2*p.getM())*(p.getF()+p.getOldF()));
   }
 }
 
 void plotParticles(int iteration) {
 
   std::string out_name("MD_vtk");
-
+  outputWriter::VTKWriter vtkWriter;
+  vtkWriter.initializeOutput(particles.size());
+  for(auto &particle : particles){
+      vtkWriter.plotParticle(particle);
+  }
+    vtkWriter.writeFile(out_name,iteration);
   outputWriter::XYZWriter writer;
   writer.plotParticles(particles, out_name, iteration);
 }
+
+
+
+
+
+

@@ -72,6 +72,9 @@ public:
   bool operator==(Particle &other);
 
   std::string toString() const;
+  void setF(std::array<double,3> new_F);
+  void setV(std::array<double,3> new_V);
+  void  setX(std::array<double,3> new_X);
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);
