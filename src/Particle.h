@@ -65,11 +65,11 @@ public:
 
     const std::array<double, 3> &getOldF() const;
 
-    void updateF(const std::array<double, 3> &newForce);
+    void setF(const std::array<double, 3> &newForce);
 
-    void updateX(const std::array<double, 3> &newX);
+    void setX(const std::array<double, 3> &newX);
 
-    void updateV(const std::array<double, 3> &newV);
+    void setV(const std::array<double, 3> &newV);
 
 
     double getM() const;

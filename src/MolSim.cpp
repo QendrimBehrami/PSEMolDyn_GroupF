@@ -2,6 +2,7 @@
 #include "FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
+#include "ParticleContainer.h"
 
 #include <iostream>
 #include <list>
@@ -30,8 +31,8 @@ void calculateV();
 void plotParticles(int iteration);
 
 constexpr double start_time = 0;
-constexpr double end_time = 1000;
-constexpr double delta_t = 0.014;
+constexpr double end_time = 10;
+constexpr double delta_t = 0.14;
 
 // TODO: what data structure to pick?
 std::list<Particle> particles;
@@ -89,21 +90,21 @@ void calculateF() {
           F_i = F_i + F_ij;
       }
     }
-    p1.updateF(F_i);
+      p1.setF(F_i);
   }
 }
 
 void calculateX() {
   for (auto &p : particles) {
     std::array<double,3> newX = p.getX() + delta_t*p.getV() + (delta_t*delta_t)/(2*p.getM()) * p.getOldF();
-    p.updateX(newX);
+      p.setX(newX);
   }
 }
 
 void calculateV() {
   for (auto &p : particles) {
     std::array<double,3> newV = p.getV() + (delta_t/(2*p.getM())) * (p.getF() + p.getOldF());
-    p.updateV(newV);
+      p.setV(newV);
   }
 }
 

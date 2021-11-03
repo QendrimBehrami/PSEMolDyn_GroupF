@@ -41,6 +41,8 @@ void FileReader::readFile(std::list<Particle> &particles, char *filename) {
     getline(input_file, tmp_string);
     std::cout << "Read line: " << tmp_string << std::endl;
 
+    std::cout << "NUM PARTICLES = " << num_particles << std::endl;
+
     for (int i = 0; i < num_particles; i++) {
       std::istringstream datastream(tmp_string);
 
