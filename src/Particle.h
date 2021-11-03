@@ -67,6 +67,10 @@ public:
 
     void setF(const std::array<double, 3> &newForce);
 
+    void addF(const std::array<double,3> &additionalForce);
+
+    void setOldF(const std::array<double,3> &newOldF);
+
     void setX(const std::array<double, 3> &newX);
 
     void setV(const std::array<double, 3> &newV);

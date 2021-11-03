@@ -66,7 +66,6 @@ bool Particle::operator==(Particle &other) {
 }
 
 void Particle::setF(const std::array<double, 3> &newForce) {
-  this->old_f = this->f;
   this->f = newForce;
 }
 
@@ -76,6 +75,14 @@ void Particle::setX(const std::array<double, 3> &newX) {
 
 void Particle::setV(const std::array<double, 3> &newV) {
     this->v = newV;
+}
+
+void Particle::setOldF(const std::array<double, 3> &newOldF) {
+    this->old_f = newOldF;
+}
+
+void Particle::addF(const std::array<double, 3> &additionalForce) {
+    this->f = this-> f + additionalForce;
 }
 
 std::ostream &operator<<(std::ostream &stream, Particle &p) {

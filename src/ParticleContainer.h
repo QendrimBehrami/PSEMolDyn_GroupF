@@ -7,30 +7,25 @@
 #include <vector>
 #include "Particle.h"
 
-class ParticleContainer {
-
-private:
-
-    /**
-     * Vector containing all Particles
-     */
-    std::vector<Particle> particles;
+class ParticleContainer : private std::vector<Particle>{
 
 public:
+    using std::vector<Particle>::emplace_back;
+    using std::vector<Particle>::push_back;
+    using std::vector<Particle>::size;
+    using std::vector<Particle>::operator[];
+    using std::vector<Particle>::begin;
+    using std::vector<Particle>::end;
+    using std::vector<Particle>::reserve;
 
-    explicit ParticleContainer(size_t size = 0);
+    explicit ParticleContainer(size_t capacity = 0);
 
     bool operator==(ParticleContainer &other) const;
 
-    const Particle &operator[](size_t index) const;
-
-    void push_back(const Particle &particle);
-
-    [[nodiscard]] std::vector<std::array<Particle *, 2>> pairs();
-
-    [[nodiscard]] size_t size() const;
+    [[nodiscard]] std::vector<std::pair<Particle*,Particle*>> pairs();
 
     [[nodiscard]] std::string toString() const;
 
-
 };
+
+std::ostream &operator<<(std::ostream &os,const ParticleContainer &pc);

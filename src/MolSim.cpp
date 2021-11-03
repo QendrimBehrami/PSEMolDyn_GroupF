@@ -31,44 +31,45 @@ void calculateV();
 void plotParticles(int iteration);
 
 constexpr double start_time = 0;
-constexpr double end_time = 10;
-constexpr double delta_t = 0.14;
+constexpr double end_time = 1000;
+constexpr double delta_t = 0.014;
 
-// TODO: what data structure to pick?
-std::list<Particle> particles;
+ParticleContainer particles;
 
 int main(int argc, char *argsv[]) {
 
-  std::cout << "Hello from MolSim for PSE!" << std::endl;
-  if (argc != 2) {
-    std::cout << "Erroneous programme call! " << std::endl;
-    std::cout << "./molsym filename" << std::endl;
-  }
-
-  FileReader fileReader;
-  fileReader.readFile(particles, argsv[1]);
-
-  double current_time = start_time;
-
-  int iteration = 0;
-
-  // for this loop, we assume: current x, current f and current v are known
-  while (current_time < end_time) {
-    // calculate new x
-    calculateX();
-    // calculate new f
-    calculateF();
-    // calculate new v
-    calculateV();
-
-    iteration++;
-    if (iteration % 10 == 0) {
-      plotParticles(iteration);
+    std::cout << "Hello from MolSim for PSE!" << std::endl;
+    if (argc != 2) {
+        std::cout << "Erroneous programme call! " << std::endl;
+        std::cout << "./molsym filename" << std::endl;
     }
-    std::cout << "Iteration " << iteration << " finished." << std::endl;
 
-    current_time += delta_t;
-  }
+    FileReader fileReader;
+    fileReader.readFile(particles, argsv[1]);
+
+    std::cout << particles << std::endl;
+
+    double current_time = start_time;
+
+    int iteration = 0;
+
+    // for this loop, we assume: current x, current f and current v are known
+    while (current_time < end_time) {
+        // calculate new x
+        calculateX();
+        // calculate new f
+        calculateF();
+        // calculate new v
+        calculateV();
+
+        iteration++;
+        if (iteration % 10 == 0) {
+            plotParticles(iteration);
+        }
+        std::cout << "Iteration " << iteration << " finished." << std::endl;
+
+        current_time += delta_t;
+    }
 
   std::cout << "output written. Terminating..." << std::endl;
 
@@ -78,20 +79,23 @@ int main(int argc, char *argsv[]) {
 }
 
 void calculateF() {
-  std::list<Particle>::iterator iterator;
-  iterator = particles.begin();
+    std::list<Particle>::iterator iterator;
 
-  for (auto &p1 : particles) {
-      std::array<double,3> F_i {0,0,0};
-    for (auto &p2 : particles) {
-      if (p1.getX() != p2.getX() ){
-          double scalar = p1.getM()*p2.getM()/ std::pow(ArrayUtils::L2Norm(p1.getX()-p2.getX()),3);
-          std::array<double,3> F_ij = scalar * (p2.getX()-p1.getX());
-          F_i = F_i + F_ij;
-      }
+    for (auto &p: particles) {
+        p.setOldF(p.getF());
+        p.setF(std::array<double, 3>{0, 0, 0});
     }
-      p1.setF(F_i);
-  }
+
+    for (auto &pair: particles.pairs()) {
+        Particle &p1 = *pair.first;
+        Particle &p2 = *pair.second;
+        std::array<double, 3> distance = p1.getX() - p2.getX();
+        std::array<double, 3> force =
+                (p1.getM() * p2.getM()) / (pow(ArrayUtils::L2Norm(distance), 3)) * (-1 * distance);
+        p1.addF(force);
+        p2.addF(-1 * force);
+    }
+
 }
 
 void calculateX() {
