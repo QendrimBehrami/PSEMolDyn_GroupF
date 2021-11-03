@@ -7,6 +7,8 @@
 #include <vector>
 #include "Particle.h"
 
+typedef std::pair<Particle*,Particle*> ParticlePair;
+
 class ParticleContainer : private std::vector<Particle>{
 
 public:
@@ -22,7 +24,7 @@ public:
 
     bool operator==(ParticleContainer &other) const;
 
-    [[nodiscard]] std::vector<std::pair<Particle*,Particle*>> pairs();
+    [[nodiscard]] std::vector<ParticlePair> pairs();
 
     [[nodiscard]] std::string toString() const;
 

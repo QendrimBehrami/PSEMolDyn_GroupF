@@ -32,8 +32,8 @@ std::string ParticleContainer::toString() const {
     return stream.str();
 }
 
-std::vector<std::pair<Particle*,Particle*>> ParticleContainer::pairs() {
-    std::vector<std::pair<Particle*,Particle*>> pairs{};
+std::vector<ParticlePair> ParticleContainer::pairs() {
+    std::vector<ParticlePair> pairs{};
     pairs.reserve(size()*(size()-1)/2); //Small optimization since number of pairs can be calculated in advance
     for (size_t i = 0; i < size(); i++) {
         for (size_t j = i + 1; j < size(); j++) {
