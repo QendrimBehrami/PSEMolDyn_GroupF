@@ -19,3 +19,6 @@ make <br>
 
 Inside the build directoy, run: <br><br>
 `./MolSim -i [filename] -d [delta_t] -e [end_time]`
+
+Example: <br><br>
+`./MolSim -i ../eingabe-sonne.txt -d 0.01 -e 100`
