@@ -24,7 +24,7 @@ void VTKWriter::initializeOutput(int numParticles) {
   vtkFile = new VTKFile_t("UnstructuredGrid");
 
   // per point, we add type, position, velocity and force
-  PointData pointData;
+  PointData pointData;//Class corresponding to the %PointData schema type
   DataArray_t mass(type::Float32, "mass", 1);
   DataArray_t velocity(type::Float32, "velocity", 3);
   DataArray_t forces(type::Float32, "force", 3);
