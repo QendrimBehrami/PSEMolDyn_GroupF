@@ -53,3 +53,12 @@ target_compile_options(MolSim
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 include(doxygen)
+
+option(BUILD_DOC "Build documentation" ON)
+
+if (BUILD_DOC)
+    add_custom_target(doc_doxygen
+        doxygen ${CMAKE_SOURCE_DIR}/Doxyfile
+        COMMENT "Generating Documentation"
+            )
+endif()
