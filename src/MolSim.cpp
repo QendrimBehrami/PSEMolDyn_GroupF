@@ -7,6 +7,8 @@
 #include <iostream>
 #include <outputWriter/VTKWriter.h>
 
+const std::string help = "Usage: MolSim -i [filename] -d [delta_t] -e [end_time]";
+
 /**
  * Parse all command line arguments, and set end_time and delta_t
  * @param argc number of arguments
@@ -132,7 +134,8 @@ void plotParticles(ParticleContainer &particles, int iteration) {
 char *parseArguments(int argc, char *argsv[]) {
     if (argc != 7) {
         std::cout << "Erroneous programme call! " << std::endl;
-        std::cout << "./molsym -i [filename] -d [delta] -e [end_time]" << std::endl;
+        std::cout << help << std::endl;
+        exit(-1);
     }
 
     char *filename = nullptr;
