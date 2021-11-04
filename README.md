@@ -9,10 +9,10 @@ Group ID and members: MolSim2021-Group-F, Qendrim Behrami, Ilia Khitrov, Yujie Z
 
 <h2>Build</h2>
 In the main directory run: <br><br>
-`mkdir -p build` <br>
-`cd build` <br>
-`cmake ../` <br>
-`make` <br>
+mkdir -p build <br>
+cd build <br>
+cmake ../ <br>
+make <br>
 
 <h2>Usage</h2>
 
