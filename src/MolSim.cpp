@@ -1,21 +1,11 @@
-
 #include "FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
 #include "ParticleContainer.h"
+#include "InputParser.h"
 
 #include <iostream>
 #include <outputWriter/VTKWriter.h>
-
-const std::string help = "Usage: MolSim -i [filename] -d [delta_t] -e [end_time]";
-
-/**
- * Parse all command line arguments, and set end_time and delta_t
- * @param argc number of arguments
- * @param argsv array of arguments as c-strings
- * @return filename
- */
-char *parseArguments(int argc, char *argsv[]);
 
 /**** forward declaration of the calculation functions ****/
 
@@ -50,16 +40,19 @@ double end_time;
 double delta_t;
 
 int main(int argc, char *argsv[]) {
-
     std::cout << "Hello from MolSim for PSE!" << std::endl;
-    char *filename = parseArguments(argc, argsv);
+
+    InputParser parser{};
+    parser.parseInput(argc,argsv);
+    char* fileName = parser.getFileName();
+    delta_t = parser.getDeltaT();
+    end_time = parser.getEndT();
 
     ParticleContainer particles;
+    std::vector<ParticlePair> particlePairs = particles.pairs();
 
     FileReader fileReader;
-    fileReader.readFile(particles, filename);
-
-    std::vector<ParticlePair> particlePairs = particles.pairs();
+    fileReader.readFile(particles, fileName);
 
     double current_time = start_time;
 
@@ -129,36 +122,4 @@ void plotParticles(ParticleContainer &particles, int iteration) {
         vtkWriter.plotParticle(particle);
     }
     vtkWriter.writeFile(out_name, iteration);
-}
-
-char *parseArguments(int argc, char *argsv[]) {
-    if (argc != 7) {
-        std::cout << "Erroneous programme call! " << std::endl;
-        std::cout << help << std::endl;
-        exit(-1);
-    }
-
-    char *filename = nullptr;
-    double _delta = 0;
-    double _end_time = 0;
-    for (auto i = 1; i < argc; i++) {
-        if (strcmp(argsv[i], "-i") == 0 && i < argc - 1) {
-            filename = argsv[i + 1];
-            i++;
-        } else if (strcmp(argsv[i], "-d") == 0 && i < argc - 1) {
-            _delta = strtod(argsv[i + 1], nullptr);
-            i++;
-        } else if (strcmp(argsv[i], "-e") == 0 && i < argc - 1) {
-            _end_time = strtod(argsv[i + 1], nullptr);
-            i++;
-        }
-    }
-
-    if(filename == nullptr || _delta == 0 || _end_time == 0){
-        throw std::runtime_error("Failed to parse command line arguments!");
-    }
-
-    delta_t = _delta;
-    end_time = _end_time;
-    return filename;
 }
