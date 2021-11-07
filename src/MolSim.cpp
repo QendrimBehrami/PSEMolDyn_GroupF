@@ -44,9 +44,9 @@ int main(int argc, char *argsv[]) {
 
     InputParser parser{};
     parser.parseInput(argc,argsv);
-    char* fileName = parser.getFileName();
-    delta_t = parser.getDeltaT();
-    end_time = parser.getEndT();
+    auto fileName = parser.getArgument(INPUTKEY::FILENAME);
+    delta_t = strtod(parser.getArgument(INPUTKEY::DELTA),nullptr);
+    end_time = strtod(parser.getArgument(INPUTKEY::END),nullptr);
 
     ParticleContainer particles;
     std::vector<ParticlePair> particlePairs = particles.pairs();

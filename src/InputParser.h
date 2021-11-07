@@ -3,24 +3,23 @@
 //
 #pragma once
 
+#include <map>
+#include <any>
+
 const std::string help = "Usage: MolSim -i [filename] -d [delta_t] -e [end_time]";
+
+enum INPUTKEY{FILENAME,DELTA,END};
 
 class InputParser {
 
 private:
-    double delta_t = 0;
-    double end_t = 0;
-    char *fileName = nullptr;
-
-    void check();
+    std::map<INPUTKEY,char*> arguments;
 
 public:
+    InputParser();
+
     void parseInput(int argc, char *argv[]);
 
-    [[nodiscard]] double getDeltaT() const;
-
-    [[nodiscard]] double getEndT() const;
-
-    [[nodiscard]] char *getFileName() const;
+    char* getArgument(INPUTKEY key);
 
 };
