@@ -1,8 +1,8 @@
-#include "FileReader.h"
+#include "io/FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
-#include "ParticleContainer.h"
-#include "InputParser.h"
+#include "particles/ParticleContainer.h"
+#include "io/InputParser.h"
 
 #include <iostream>
 #include <outputWriter/VTKWriter.h>
@@ -45,7 +45,9 @@ int main(int argc, char *argsv[]) {
     InputParser parser{};
     parser.parseInput(argc,argsv);
     auto fileName = parser.getArgument(INPUTKEY::FILENAME);
-    delta_t = strtod(parser.getArgument(INPUTKEY::DELTA),nullptr);
+    if((delta_t = strtod(parser.getArgument(INPUTKEY::DELTA),nullptr))<=0){
+        throw std::runtime_error("Invalid delta_t!");
+    }
     end_time = strtod(parser.getArgument(INPUTKEY::END),nullptr);
 
     ParticleContainer particles;
