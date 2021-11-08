@@ -43,12 +43,10 @@ int main(int argc, char *argsv[]) {
     std::cout << "Hello from MolSim for PSE!" << std::endl;
 
     InputParser parser{};
-    parser.parseInput(argc,argsv);
-    auto fileName = parser.getArgument(INPUTKEY::FILENAME);
-    if((delta_t = strtod(parser.getArgument(INPUTKEY::DELTA),nullptr))<=0){
-        throw std::runtime_error("Invalid delta_t!");
-    }
-    end_time = strtod(parser.getArgument(INPUTKEY::END),nullptr);
+    parser.parseInput(argc, argsv);
+    auto fileName = std::get<char *>(parser.getArgument(InputKey::FILENAME));
+    delta_t = std::get<double>(parser.getArgument(InputKey::DELTA));
+    end_time = std::get<double>(parser.getArgument(InputKey::END));
 
     ParticleContainer particles;
     std::vector<ParticlePair> particlePairs = particles.pairs();

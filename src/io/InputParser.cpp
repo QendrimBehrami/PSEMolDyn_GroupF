@@ -19,6 +19,7 @@ static struct option long_options[] = {
 void InputParser::parseInput(int argc, char **argv) {
     while (true) {
         int result = getopt_long(argc, argv, "i:d:e:h", long_options, nullptr);
+        double temp = 0;
         if (result == -1) {
             break;
         }
@@ -27,28 +28,42 @@ void InputParser::parseInput(int argc, char **argv) {
                 arguments[FILENAME] = optarg;
                 break;
             case 'd':
-                arguments[DELTA] = optarg;
+                temp = strtod(optarg, nullptr);
+                if (temp <= 0) {
+                    std::cerr << "Invalid parameter!\n" << help << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                arguments[DELTA] = temp;
                 break;
             case 'e':
-                arguments[END] = optarg;
+                temp = strtod(optarg, nullptr);
+                if (temp <= 0) {
+                    std::cerr << "Invalid parameter!\n" << help << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                arguments[END] = temp;
                 break;
             case 'h':
                 std::cout << help << std::endl;
                 exit(EXIT_SUCCESS);
             case ':':
             case '?':
+            default:
                 std::cerr << "Invalid parameter!\n" << help << std::endl;
                 exit(EXIT_FAILURE);
-            default:
-                break;
         }
     }
 }
 
-char* InputParser::getArgument(INPUTKEY key) {
-    return arguments[key];
+InputType InputParser::getArgument(InputKey key) {
+    if (arguments.find(key) != arguments.end()) {
+        return arguments[key];
+    } else {
+        std::cerr << "Missing parameter!\n" << help << std::endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
-InputParser::InputParser() : arguments{}{
+InputParser::InputParser() : arguments{} {
 
 }
