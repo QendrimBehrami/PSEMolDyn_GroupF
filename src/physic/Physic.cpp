@@ -26,7 +26,6 @@ void Physic::calculateForces() {
     }
     for (auto &force: this->forces) {
         force->calculateForce(this->particles);
-        //std::cout << *particles << std::endl;
     }
 }
 

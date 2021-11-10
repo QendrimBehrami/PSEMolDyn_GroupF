@@ -7,27 +7,26 @@
 #include <iostream>
 #include "InputParser.h"
 
-
 static struct option long_options[] = {
-        {"input",   required_argument, nullptr, 'i'},
+        {"filename", required_argument, nullptr, 'f'},
         {"delta_t", required_argument, nullptr, 'd'},
-        {"end_t",   required_argument, nullptr, 'e'},
-        {"help",    optional_argument, nullptr, 'h'},
-        {"output",  optional_argument, nullptr, 'o'},
-        {"writer",  optional_argument, nullptr, 'w'},
-        {nullptr, 0,                   nullptr, 0}
+        {"end_t", required_argument, nullptr, 'e'},
+        {"help", optional_argument, nullptr, 'h'},
+        {"output", optional_argument, nullptr, 'o'},
+        {"writer", optional_argument, nullptr, 'w'},
+        {"interval", optional_argument, nullptr, 'i'},
+        {nullptr, 0, nullptr, 0}
 };
 
 void InputParser::parseInput(int argc, char **argv) {
-    arguments[WRITER] = outputWriter::UNDEFINED; // Provide default writer to prevent segfault :(
     while (true) {
-        int result = getopt_long(argc, argv, "i:d:e:ho:w:", long_options, nullptr);
+        int result = getopt_long(argc, argv, "f:d:e:ho:w:i:", long_options, nullptr);
         double temp = 0;
         if (result == -1) {
             break;
         }
         switch (result) {
-            case 'i':
+            case 'f':
                 arguments[FILENAME] = optarg;
                 break;
             case 'd':
@@ -40,7 +39,7 @@ void InputParser::parseInput(int argc, char **argv) {
             case 'e':
                 temp = strtod(optarg, nullptr);
                 if (temp <= 0) {
-                   error();
+                    error();
                 }
                 arguments[END] = temp;
                 break;
@@ -48,13 +47,21 @@ void InputParser::parseInput(int argc, char **argv) {
                 arguments[OUT] = optarg;
                 break;
             case 'w':
-                if(strcasecmp("XYZ",optarg)==0){
+                if (strcasecmp("XYZ", optarg) == 0) {
                     arguments[WRITER] = outputWriter::XYZ;
-                }
-                else if(strcasecmp("VTK",optarg)==0){
+                } else if (strcasecmp("VTK", optarg) == 0) {
                     arguments[WRITER] = outputWriter::VTK;
+                } else {
+                    error();
                 }
-                else{
+                break;
+            case 'i':
+                try {
+                    if(*std::get_if<int>(&(arguments[INTERVAL]=std::stoi(optarg)))<=0){ // Ok bissl too much lol
+                        error();
+                    }
+                }
+                catch (std::runtime_error &e) { // Catch out of range error for example
                     error();
                 }
                 break;
@@ -79,7 +86,10 @@ InputType InputParser::getArgument(InputKey key) {
 }
 
 InputParser::InputParser() : arguments{} {
-
+    // Provide default values to prevent segfault :(
+    arguments[WRITER] = DEFAULT_WRITER;
+    arguments[INTERVAL] = DEFAULT_INTERVAL;
+    arguments[OUT] = DEFAULT_OUT_NAME;
 }
 
 void InputParser::error() {

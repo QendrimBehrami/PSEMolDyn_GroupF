@@ -7,17 +7,22 @@
 #include <variant>
 #include <io/OutputWriter.h>
 
-const std::string help = "Usage: MolSim -i [filename] -d [delta_t] -e [end_time]";
+const std::string help = "Usage: MolSim -f [filename] -d [delta_t] -e [end_time]";
+
+constexpr int DEFAULT_WRITER = outputWriter::VTK;
+constexpr int DEFAULT_INTERVAL = 10;
+const std::string DEFAULT_OUT_NAME = "MD_vtk";
 
 enum InputKey {
-    FILENAME /// Name of input file as char*
+    FILENAME /// Name of input file as std::string
     , DELTA /// Value of delta time as double
     , END /// Value of end time as double
-    , OUT /// Output filename as char*
-    , WRITER // Output writer type as char*
+    , OUT /// Output filename as std::string
+    , WRITER // Output writer type as int
+    , INTERVAL // Number of iterations between file writing as int
 };
 
-typedef std::variant<char *, double, int> InputType;
+typedef std::variant<std::string, double, int> InputType;
 
 class InputParser {
 

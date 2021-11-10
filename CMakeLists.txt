@@ -20,7 +20,7 @@ file(GLOB_RECURSE MY_SRC
 )
 
 # create make target
-add_executable(MolSim ${MY_SRC} src/physic/Physic.cpp src/physic/Physic.h src/physic/ForceCalculation.h src/physic/Gravity.cpp src/physic/Gravity.h src/io/OutputWriter.cpp src/io/OutputWriter.h src/io/Writer.h)
+add_executable(MolSim ${MY_SRC})
 
 # set cxx standard. You may raise this if you want.
 target_compile_features(MolSim
