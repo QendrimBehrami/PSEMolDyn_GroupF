@@ -11,8 +11,9 @@
 
 namespace outputWriter {
     enum OutputFileType {
-        XYZ,
-        VTK
+        UNDEFINED = 0,
+        XYZ = 1,
+        VTK = 2,
     };
 
     class OutputWriter {

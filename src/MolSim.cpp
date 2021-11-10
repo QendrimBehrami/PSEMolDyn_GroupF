@@ -22,6 +22,14 @@ int main(int argc, char *argsv[]) {
     delta_t = std::get<double>(parser.getArgument(InputKey::DELTA));
     end_time = std::get<double>(parser.getArgument(InputKey::END));
 
+    char *outFile = std::get<char *>(parser.getArgument(InputKey::OUT));
+    std::string writerFileName = outFile == nullptr ? "MD_vtk" : outFile;
+
+    int fileType = std::get<int>(parser.getArgument(InputKey::WRITER));
+    if (fileType == outputWriter::UNDEFINED) {
+        fileType = outputWriter::VTK;
+    }
+
     std::shared_ptr<ParticleContainer> particles(new ParticleContainer());
     FileReader fileReader;
     fileReader.readFile(particles, fileName);
@@ -29,7 +37,7 @@ int main(int argc, char *argsv[]) {
     Physic physic{particles, delta_t};
     physic.addForceCalculation(std::make_shared<Gravity>());
 
-    outputWriter::OutputWriter writer{outputWriter::VTK, "MD_vtk"};
+    outputWriter::OutputWriter writer{static_cast<outputWriter::OutputFileType>(fileType), writerFileName};
 
     double current_time = start_time;
 
