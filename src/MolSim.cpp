@@ -6,6 +6,9 @@
 
 #include <iostream>
 #include <outputWriter/VTKWriter.h>
+#include <physic/Gravity.h>
+
+#include "physic/Physic.h"
 
 /**** forward declaration of the calculation functions ****/
 
@@ -33,7 +36,7 @@ void calculateV(ParticleContainer &particles);
  * @param particles Vector containing all particles
  * @param iteration
  */
-void plotParticles(ParticleContainer &particles, int iteration);
+void plotParticles(std::shared_ptr<ParticleContainer> &particles, int iteration);
 
 constexpr double start_time = 0;
 double end_time;
@@ -48,11 +51,13 @@ int main(int argc, char *argsv[]) {
     delta_t = std::get<double>(parser.getArgument(InputKey::DELTA));
     end_time = std::get<double>(parser.getArgument(InputKey::END));
 
-    ParticleContainer particles;
-    std::vector<ParticlePair> particlePairs = particles.pairs();
-
+    std::shared_ptr<ParticleContainer> particles(new ParticleContainer());
     FileReader fileReader;
     fileReader.readFile(particles, fileName);
+
+    Physic physic{particles, delta_t};
+    Gravity gravity{};
+    physic.addForceCalculation(std::make_shared<Gravity>(gravity));
 
     double current_time = start_time;
 
@@ -60,25 +65,20 @@ int main(int argc, char *argsv[]) {
 
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
-        // calculate new x
-        calculateX(particles);
-        // calculate new f
-        calculateF(particles, particlePairs);
-        // calculate new v
-        calculateV(particles);
 
+        physic.calculate();
         iteration++;
         if (iteration % 10 == 0) {
-            plotParticles(particles,iteration);
+            plotParticles(particles, iteration);
         }
         std::cout << "Iteration " << iteration << " finished." << std::endl;
 
         current_time += delta_t;
     }
 
-  std::cout << "output written. Terminating..." << std::endl;
+    std::cout << "output written. Terminating..." << std::endl;
 
-  return 0;
+    return 0;
 }
 
 void calculateF(ParticleContainer &particles, const std::vector<ParticlePair> &pairs) {
@@ -114,11 +114,11 @@ void calculateV(ParticleContainer &particles) {
     }
 }
 
-void plotParticles(ParticleContainer &particles, int iteration) {
+void plotParticles(std::shared_ptr<ParticleContainer> &particles, int iteration) {
     std::string out_name("MD_vtk");
     outputWriter::VTKWriter vtkWriter;
-    vtkWriter.initializeOutput(particles.size());
-    for (auto &particle: particles) {
+    vtkWriter.initializeOutput(particles->size());
+    for (auto &particle: *particles) {
         vtkWriter.plotParticle(particle);
     }
     vtkWriter.writeFile(out_name, iteration);
