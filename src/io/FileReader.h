@@ -11,6 +11,7 @@
 #include "particles/ParticleContainer.h"
 
 #include <list>
+#include <memory>
 
 class FileReader {
 
@@ -18,5 +19,5 @@ public:
   FileReader();
   virtual ~FileReader();
 
-  void readFile(ParticleContainer &particles, char *filename);
+  void readFile(std::shared_ptr<ParticleContainer> &particles, char *filename);
 };
